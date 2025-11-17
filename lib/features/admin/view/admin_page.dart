@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:itull2/features/admin/controllers/bobot_nilai.dart';
 // import 'package:itull2/features/admin/view/crud_mata_pelajaran.dart';
 import 'package:itull2/features/admin/view/crud_santri.dart';
+import 'package:itull2/features/admin/view/daftar_santri.dart';
 import 'package:itull2/features/admin/view/input_nilai_mapel.dart';
 import 'package:itull2/features/admin/view/laporan.dart';
 import 'package:itull2/features/admin/view/ubah_bobot.dart';
@@ -100,6 +101,17 @@ class AdminPage extends StatelessWidget {
                        Navigator.push(
                         context,
                         MaterialPageRoute(builder: (_) => NilaiDetailPage()),
+                      );
+                    },
+                  ),
+                  _buildCard(
+                    icon: Icons.analytics,
+                    title: "Daftar Santri",
+                    color: Colors.purple,
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (_) => DaftarSantriPage()),
                       );
                     },
                   ),

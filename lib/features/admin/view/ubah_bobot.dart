@@ -27,35 +27,39 @@ class BobotFormPage extends StatelessWidget {
                   controller: controller,
                   keyboardType: TextInputType.number,
                   decoration: InputDecoration(suffixText: '%'),
-           onSubmitted: (value) {
+                  onSubmitted: (value) {
                     double newValue =
                         double.tryParse(value) ?? bobotProvider.bobot[mata]!;
 
-                    // Hitung total bobot sementara
-                    double totalSebelum = bobotProvider.bobot.values.fold(
-                      0,
-                      (a, b) => a + b,
-                    );
-                    double totalSetelah =
-                        totalSebelum - bobotProvider.bobot[mata]! + newValue;
+                    // Hitung total bobot setelah perubahan
+                    double totalSementara =
+                        bobotProvider.bobot.values.fold(0.0, (a, b) => a + b) -
+                        bobotProvider.bobot[mata]! +
+                        newValue;
 
-                    if (totalSetelah > 100) {
-                      // Tampilkan peringatan jika total lebih dari 100
+                    if (totalSementara > 100) {
                       ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(
                           content: Text(
-                            'Total bobot tidak boleh lebih dari 100%! Saat ini total: $totalSetelah%',
+                            'Total bobot tidak boleh lebih dari 100%! Saat ini: $totalSementara%',
+                          ),
+                          backgroundColor: Colors.red,
+                        ),
+                      );
+                    } else if (totalSementara < 100) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text(
+                            'Total bobot harus 100%! Saat ini: $totalSementara%',
                           ),
                           backgroundColor: Colors.red,
                         ),
                       );
                     } else {
-                      // Simpan bobot baru jika valid
                       bobotProvider.setBobot(mata, newValue);
                     }
                   },
-
-                 ),
+                ),
               ),
             ),
           );
