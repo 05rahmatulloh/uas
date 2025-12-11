@@ -1,70 +1,17 @@
+import 'package:Santri/features/admin/view/ustadzPage.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-import '../../../providers/providers_auth.dart';
+import 'package:get/get.dart';
 import '../../../features/auth/controllers/auth_controller.dart';
 import '../../../features/auth/model/user_model.dart';
 import '../../admin/view/admin_page.dart';
 import '../../santri/views/santri_page.dart';
 import '../../walisantri/views/wali_santri_page.dart';
 
-class LoginPage extends StatefulWidget {
-  const LoginPage({super.key});
-
-  @override
-  _LoginPageState createState() => _LoginPageState();
-}
-
-class _LoginPageState extends State<LoginPage> {
+class LoginPage extends StatelessWidget {
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
-  final authController = AuthController();
 
-  bool loading = false;
-  String? error;
-
-  void handleLogin() async {
-    setState(() {
-      loading = true;
-      error = null;
-    });
-
-    final User? user = await authController.login(
-      emailController.text.trim(),
-      passwordController.text.trim(),
-    );
-
-    setState(() {
-      loading = false;
-    });
-
-    if (user != null) {
-      context.read<AuthProvider>().login(user);
-
-      Widget home;
-      switch (user.role) {
-        case 'admin':
-          home = AdminPage();
-          break;
-        case 'ustadz':
-          home = AdminPage();
-          break;
-        case 'wali':
-          home = SantriNilaiListPage();
-          break;
-        default:
-          home = LoginPage();
-      }
-
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (_) => home),
-      );
-    } else {
-      setState(() {
-        error = "Email atau password salah!";
-      });
-    }
-  }
+  final auth = Get.put(AuthController()); // DAFTARKAN CONTROLLER
 
   @override
   Widget build(BuildContext context) {
@@ -94,6 +41,8 @@ class _LoginPageState extends State<LoginPage> {
                     ),
                   ),
                   SizedBox(height: 24),
+
+                  // EMAIL
                   TextField(
                     controller: emailController,
                     decoration: InputDecoration(
@@ -104,7 +53,10 @@ class _LoginPageState extends State<LoginPage> {
                       ),
                     ),
                   ),
+
                   SizedBox(height: 16),
+
+                  // PASSWORD
                   TextField(
                     controller: passwordController,
                     obscureText: true,
@@ -116,29 +68,44 @@ class _LoginPageState extends State<LoginPage> {
                       ),
                     ),
                   ),
+
                   SizedBox(height: 24),
-                  loading
-                      ? CircularProgressIndicator()
-                      : SizedBox(
-                          width: double.infinity,
-                          height: 50,
-                          child: ElevatedButton(
-                            onPressed: handleLogin,
-                            style: ElevatedButton.styleFrom(
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(12),
+
+                  // BUTTON LOGIN
+                  Obx(() {
+                    return auth.loading.value
+                        ? CircularProgressIndicator()
+                        : SizedBox(
+                            width: double.infinity,
+                            height: 50,
+                            child: ElevatedButton(
+                              onPressed: () async {
+                                await handleLogin();
+                              },
+                              style: ElevatedButton.styleFrom(
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(12),
+                                ),
+                              ),
+                              child: Text(
+                                "Login",
+                                style: TextStyle(fontSize: 18),
                               ),
                             ),
-                            child: Text(
-                              "Login",
-                              style: TextStyle(fontSize: 18),
-                            ),
-                          ),
-                        ),
-                  if (error != null) ...[
-                    SizedBox(height: 16),
-                    Text(error!, style: TextStyle(color: Colors.red)),
-                  ],
+                          );
+                  }),
+
+                  SizedBox(height: 16),
+
+                  // ERROR MESSAGE
+                  Obx(() {
+                    return auth.error.value == null
+                        ? SizedBox()
+                        : Text(
+                            auth.error.value!,
+                            style: TextStyle(color: Colors.red),
+                          );
+                  }),
                 ],
               ),
             ),
@@ -147,4 +114,37 @@ class _LoginPageState extends State<LoginPage> {
       ),
     );
   }
-}
+
+  // LOGIN METHOD VERSI GETX
+ 
+ Future<void> handleLogin() async {
+    auth.error.value = null;
+
+    User? user = await auth.login(
+      emailController.text.trim(),
+      passwordController.text.trim(),
+    );
+
+    if (user != null) {
+      switch (user.role) {
+        case 'admin':
+          Get.offAll(() => AdminPage());
+          break;
+
+        case 'ustadz':
+          Get.offAll(() => Ustadzpage());
+          break;
+
+        case 'wali':
+          Get.offAll(() => WaliSantriPage()); // PERBAIKAN INI
+          break;
+
+        default:
+          auth.error.value = "Role tidak dikenali!";
+      }
+    } else {
+      auth.error.value = "Email atau password salah!";
+    }
+  }
+
+ }

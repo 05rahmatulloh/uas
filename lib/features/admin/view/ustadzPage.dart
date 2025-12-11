@@ -1,7 +1,6 @@
 import 'dart:async';
 import 'dart:io';
 
-import 'package:Santri/features/admin/view/input/ustadz.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -14,14 +13,14 @@ import 'package:Santri/features/admin/view/daftar_santri.dart';
 import 'package:Santri/features/auth/view/login_page.dart';
 import '../../../providers/providers_auth.dart';
 
-class AdminPage extends StatefulWidget {
-  AdminPage({super.key});
+class Ustadzpage extends StatefulWidget {
+  Ustadzpage({super.key});
 
   @override
-  State<AdminPage> createState() => _AdminPageState();
+  State<Ustadzpage> createState() => _UstadzpageState();
 }
 
-class _AdminPageState extends State<AdminPage> {
+class _UstadzpageState extends State<Ustadzpage> {
   final DBHelper db = DBHelper();
   bool firebaseStatus = false;
   Timer? timer;
@@ -77,7 +76,7 @@ class _AdminPageState extends State<AdminPage> {
       return firebaseStatus;
     } catch (e) {
       print("❌ Error saat cek internet/Firebase: $e");
-            status = firebaseStatus;
+      status = firebaseStatus;
 
       return false;
     }
@@ -105,11 +104,9 @@ class _AdminPageState extends State<AdminPage> {
             icon: Icon(Icons.refresh),
             tooltip: "Refresh Status",
             onPressed: () async {
-              // cek ulang koneksi   
+              // cek ulang koneksi
               await checkConnection();
-              setState(()  {
-             
-              }); // refresh UI
+              setState(() {}); // refresh UI
             },
           ),
           IconButton(
@@ -137,41 +134,41 @@ class _AdminPageState extends State<AdminPage> {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
-              //   ElevatedButton(
-              //     onPressed: status
-              //         ? () async {
-              //             await DBHelper().syncLocalToFirebase();
-              //             ScaffoldMessenger.of(context).showSnackBar(
-              //               SnackBar(
-              //                 content: Text(
-              //                   "Data Local → Firebase berhasil dikirim",
-              //                 ),
-              //               ),
-              //             );
-              //           }
-              //         : null, // disable jika tidak ada koneksi
-              //     child: Text("Kirim Ke server"),
-              //   ),
-              //   ElevatedButton(
-              //     onPressed: status
-              //         ? () async {
-              //             await DBHelper().syncFirebaseToLocal();
-              //             ScaffoldMessenger.of(context).showSnackBar(
-              //               SnackBar(
-              //                 content: Text(
-              //                   "Data Firebase → Local berhasil disalin",
-              //                 ),
-              //               ),
-              //             );
-              //           }
-              //         : null, // disable jika tidak ada koneksi
-              //     child: Text("Refresh"),
-              //   ),
+                //   ElevatedButton(
+                //     onPressed: status
+                //         ? () async {
+                //             await DBHelper().syncLocalToFirebase();
+                //             ScaffoldMessenger.of(context).showSnackBar(
+                //               SnackBar(
+                //                 content: Text(
+                //                   "Data Local → Firebase berhasil dikirim",
+                //                 ),
+                //               ),
+                //             );
+                //           }
+                //         : null, // disable jika tidak ada koneksi
+                //     child: Text("Kirim Ke server"),
+                //   ),
+                //   ElevatedButton(
+                //     onPressed: status
+                //         ? () async {
+                //             await DBHelper().syncFirebaseToLocal();
+                //             ScaffoldMessenger.of(context).showSnackBar(
+                //               SnackBar(
+                //                 content: Text(
+                //                   "Data Firebase → Local berhasil disalin",
+                //                 ),
+                //               ),
+                //             );
+                //           }
+                //         : null, // disable jika tidak ada koneksi
+                //     child: Text("Refresh"),
+                //   ),
               ],
             ),
             SizedBox(height: 20),
             Text(
-              "Selamat datang, Admin",
+              "Selamat datang, Ustadz",
               style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
             ),
             SizedBox(height: 4),
@@ -238,17 +235,6 @@ class _AdminPageState extends State<AdminPage> {
                       Navigator.push(
                         context,
                         MaterialPageRoute(builder: (_) => DaftarSantriPage()),
-                      );
-                    },
-                  ),
-                   _buildCard(
-                    icon: Icons.list_alt,
-                    title: "Daftar Ustadz",
-                    color: const Color.fromARGB(255, 148, 148, 148),
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (_) => InputUserPageUstadz()),
                       );
                     },
                   ),

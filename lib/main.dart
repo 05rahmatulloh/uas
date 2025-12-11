@@ -4,6 +4,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get_navigation/get_navigation.dart';
 import 'package:provider/provider.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 
@@ -48,7 +49,7 @@ class MyApp extends StatelessWidget {
     return Consumer<AuthProvider>(
       builder: (context, auth, _) {
         if (!auth.isLoaded) {
-          return MaterialApp(
+          return GetMaterialApp(
             home: Scaffold(body: Center(child: CircularProgressIndicator())),
           );
         }
@@ -72,7 +73,7 @@ class MyApp extends StatelessWidget {
           homePage = LoginPage();
         }
 
-        return MaterialApp(
+        return GetMaterialApp(
           debugShowCheckedModeBanner: false,
           title: 'e-Penilaian Santri',
           theme: ThemeData(primarySwatch: Colors.blue),
