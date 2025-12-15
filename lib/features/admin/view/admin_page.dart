@@ -4,6 +4,9 @@ import 'dart:io';
 import 'package:Santri/features/admin/view/input/ustadz.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get_state_manager/get_state_manager.dart';
+import 'package:get/instance_manager.dart';
+import 'package:get/utils.dart';
 import 'package:provider/provider.dart';
 import 'package:Santri/core/dbhelper.dart';
 import 'package:Santri/features/admin/view/crud_santri.dart';
@@ -31,6 +34,7 @@ class _AdminPageState extends State<AdminPage> {
   void initState() {
     super.initState();
     checkConnection(); // cek pertama
+    koneksi();
     timer = Timer.periodic(Duration(seconds: 10), (_) => checkConnection());
   }
 
@@ -40,9 +44,7 @@ class _AdminPageState extends State<AdminPage> {
     try {
       final snapshot = await ref.get();
       if (snapshot.exists) {
-        setState(() {
-          status = true;
-        });
+        status = true;
         print("✅ Firebase Database berhasil diakses!");
         print("Jumlah data: ${snapshot.children.length}");
       } else {
@@ -77,7 +79,7 @@ class _AdminPageState extends State<AdminPage> {
       return firebaseStatus;
     } catch (e) {
       print("❌ Error saat cek internet/Firebase: $e");
-            status = firebaseStatus;
+      status = firebaseStatus;
 
       return false;
     }
@@ -90,13 +92,16 @@ class _AdminPageState extends State<AdminPage> {
     super.dispose();
   }
 
+  final tes = Get.put(gets());
+
   @override
   Widget build(BuildContext context) {
     final userEmail = context.read<AuthProvider>().user?.email ?? '';
     // final firebaseStatus = context
     //     .watch<FirebaseConnectionProvider>()
     //     .isConnected;
-
+    // koneksi();
+tes.koneksi();
     return Scaffold(
       appBar: AppBar(
         title: Text("Dashboard"),
@@ -105,11 +110,9 @@ class _AdminPageState extends State<AdminPage> {
             icon: Icon(Icons.refresh),
             tooltip: "Refresh Status",
             onPressed: () async {
-              // cek ulang koneksi   
+              // cek ulang koneksi
               await checkConnection();
-              setState(()  {
-             
-              }); // refresh UI
+              setState(() {}); // refresh UI
             },
           ),
           IconButton(
@@ -130,43 +133,45 @@ class _AdminPageState extends State<AdminPage> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            status
+            Obx((){
+              {return tes.status.value 
                 ? Icon(Icons.wifi, color: Colors.greenAccent)
-                : Icon(Icons.wifi_off_outlined, color: Colors.red),
+                : Icon(Icons.wifi_off_outlined, color: Colors.red);}
+            }),
             // Tombol Sinkronisasi
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
-              //   ElevatedButton(
-              //     onPressed: status
-              //         ? () async {
-              //             await DBHelper().syncLocalToFirebase();
-              //             ScaffoldMessenger.of(context).showSnackBar(
-              //               SnackBar(
-              //                 content: Text(
-              //                   "Data Local → Firebase berhasil dikirim",
-              //                 ),
-              //               ),
-              //             );
-              //           }
-              //         : null, // disable jika tidak ada koneksi
-              //     child: Text("Kirim Ke server"),
-              //   ),
-              //   ElevatedButton(
-              //     onPressed: status
-              //         ? () async {
-              //             await DBHelper().syncFirebaseToLocal();
-              //             ScaffoldMessenger.of(context).showSnackBar(
-              //               SnackBar(
-              //                 content: Text(
-              //                   "Data Firebase → Local berhasil disalin",
-              //                 ),
-              //               ),
-              //             );
-              //           }
-              //         : null, // disable jika tidak ada koneksi
-              //     child: Text("Refresh"),
-              //   ),
+                //   ElevatedButton(
+                //     onPressed: status
+                //         ? () async {
+                //             await DBHelper().syncLocalToFirebase();
+                //             ScaffoldMessenger.of(context).showSnackBar(
+                //               SnackBar(
+                //                 content: Text(
+                //                   "Data Local → Firebase berhasil dikirim",
+                //                 ),
+                //               ),
+                //             );
+                //           }
+                //         : null, // disable jika tidak ada koneksi
+                //     child: Text("Kirim Ke server"),
+                //   ),
+                //   ElevatedButton(
+                //     onPressed: status
+                //         ? () async {
+                //             await DBHelper().syncFirebaseToLocal();
+                //             ScaffoldMessenger.of(context).showSnackBar(
+                //               SnackBar(
+                //                 content: Text(
+                //                   "Data Firebase → Local berhasil disalin",
+                //                 ),
+                //               ),
+                //             );
+                //           }
+                //         : null, // disable jika tidak ada koneksi
+                //     child: Text("Refresh"),
+                //   ),
               ],
             ),
             SizedBox(height: 20),
@@ -241,14 +246,16 @@ class _AdminPageState extends State<AdminPage> {
                       );
                     },
                   ),
-                   _buildCard(
+                  _buildCard(
                     icon: Icons.list_alt,
                     title: "Daftar Ustadz",
                     color: const Color.fromARGB(255, 148, 148, 148),
                     onTap: () {
                       Navigator.push(
                         context,
-                        MaterialPageRoute(builder: (_) => InputUserPageUstadz()),
+                        MaterialPageRoute(
+                          builder: (_) => InputUserPageUstadz(),
+                        ),
                       );
                     },
                   ),

@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:Santri/features/admin/model/santri_model.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
+import 'package:get/get.dart';
 import 'package:path/path.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 import 'package:sqflite/sqflite.dart';
@@ -82,7 +83,6 @@ class FirebaseConnectionProvider extends ChangeNotifier {
     super.dispose();
   }
 }
-
 
 class DBHelper {
   static final DBHelper _instance = DBHelper._internal();
@@ -511,3 +511,25 @@ class DBHelper {
   }
 }
 
+class gets extends GetxController {
+  var status = false.obs;
+
+  void koneksi() async {
+    DatabaseReference ref = FirebaseDatabase.instance.ref("makanan");
+
+    try {
+      final snapshot = await ref.get();
+      if (snapshot.exists) {
+        status.value = true;
+        print("✅ Firebase Database berhasil diakses!");
+        print("Jumlah data: ${snapshot.children.length}");
+      } else {
+        status.value = false;
+        print("⚠ Node 'makanan' tidak ditemukan di Firebase Database.");
+      }
+    } catch (e) {
+      status.value = false;
+      print("❌ Gagal mengakses Firebase Database: $e");
+    }
+  }
+}
